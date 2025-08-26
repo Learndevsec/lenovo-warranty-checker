@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenovo Warranty Lookup - Professional Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjZTYwMDEyIi8+Cjwvc3ZnPgo=">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🔍</div>
+                    <div class="title-section">
+                        <h1>Lenovo Warranty Lookup</h1>
+                        <p>Professional Batch Warranty Verification Tool</p>
+                    </div>
+                </div>
+                <div class="stats-quick">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalProcessed">0</span>
+                        <span class="stat-label">Processed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="activeWarranties">0</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>Warranty Lookup</h2>
+                    <p>Upload a file or enter serial numbers manually to check warranty status</p>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="upload">📁 File Upload</button>
+                    <button class="tab-btn" data-tab="manual">✍️ Manual Entry</button>
+                </div>
+
+                <!-- Upload Tab -->
+                <div class="tab-content active" id="upload-tab">
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" id="fileInput" accept=".csv,.txt" hidden>
+                        <div class="upload-content">
+                            <div class="upload-icon">📄</div>
+                            <h3>Drop your file here</h3>
+                            <p>or <span class="upload-link">click to browse</span></p>
+                            <div class="file-info">
+                                <small>Supports CSV and TXT files • Max 5MB • One serial per line</small>
+                            </div>
+                        </div>
+                        <div class="upload-progress hidden" id="uploadProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="progress-text">Processing file...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Tab -->
+                <div class="tab-content" id="manual-tab">
+                    <div class="manual-input-section">
+                        <label for="serialTextarea">Serial Numbers</label>
+                        <textarea 
+                            id="serialTextarea" 
+                            placeholder="Enter serial numbers here...&#10;&#10;Examples:&#10;PF2ABCDE&#10;PF3FGHIJ&#10;PF4KLMNO&#10;&#10;• One per line or comma-separated&#10;• 6-15 alphanumeric characters"
+                            rows="8"
+                        ></textarea>
+                        <div class="input-actions">
+                            <button class="btn-secondary" id="clearBtn">Clear All</button>
+                            <button class="btn-primary" id="checkManualBtn">
+                                <span class="btn-text">Check Warranty</span>
+                                <span class="btn-spinner hidden">🔄</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section class="loading-section hidden" id="loadingSection">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <h3>Processing Warranty Information</h3>
+                    <p id="loadingText">Checking warranty status for your devices...</p>
+                    <div class="loading-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="checkProgress"></div>
+                        </div>
+                        <span class="progress-details" id="progressDetails">0/0 processed</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="resultsSection">
+                <div class="results-header">
+                    <div class="results-title">
+                        <h2>Warranty Results</h2>
+                        <span class="results-count" id="resultsCount">0 devices processed</span>
+                    </div>
+                    <div class="results-actions">
+                        <button class="btn-secondary" id="exportBtn">📥 Export CSV</button>
+                        <button class="btn-secondary" id="newCheckBtn">🔄 New Check</button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card active">
+                        <div class="card-icon">✅</div>
+                        <div class="card-content">
+                            <h3 id="activeCount">0</h3>
+                            <p>Active Warranties</p>
+                        </div>
+                    </div>
+                    <div class="summary-card expiring">
+                        <div class="card-icon">⚠️</div>
+                        <div class="card-content">
+                            <h3 id="expiringCount">0</h3>
+                            <p>Expiring Soon</p>
+                        </div>
+                    </div>
+                    <div class="summary-card expired">
+                        <div class="card-icon">❌</div>
+                        <div class="card-content">
+                            <h3 id="expiredCount">0</h3>
+                            <p>Expired</p>
+                        </div>
+                    </div>
+                    <div class="summary-card error">
+                        <div class="card-icon">🚫</div>
+                        <div class="card-content">
+                            <h3 id="errorCount">0</h3>
+                            <p>Errors</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="results-filters">
+                    <div class="filter-group">
+                        <label for="statusFilter">Filter by Status:</label>
+                        <select id="statusFilter">
+                            <option value="all">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Expiring Soon">Expiring Soon</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Error">Error</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchFilter">Search:</label>
+                        <input type="text" id="searchFilter" placeholder="Search serial or product...">
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="table-container">
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="serialNumber">
+                                    Serial Number <span class="sort-arrow">↕️</span>
+                                </th>
+                                <th class="sortable" data-sort="productName">
+                                    Product <span class="sort-arrow">↕️</span>
+                                </th>
+                                <th class="sortable" data-sort="warrantyEndDate">
+                                    Warranty Expires <span class="sort-arrow">↕️</span>
+                                </th>
+                                <th class="sortable" data-sort="daysRemaining">
+                                    Days Remaining <span class="sort-arrow">↕️</span>
+                                </th>
+                                <th class="sortable" data-sort="warrantyStatus">
+                                    Status <span class="sort-arrow">↕️</span>
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Results will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <button class="page-btn" id="prevPage">← Previous</button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button class="page-btn" id="nextPage">Next →</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Lenovo Warranty Lookup Tool. Not affiliated with Lenovo Group.</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showAbout()">About</a>
+                    <a href="#" onclick="showPrivacy()">Privacy</a>
+                    <a href="https://pcsupport.lenovo.com" target="_blank">Lenovo Support</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal for details -->
+    <div class="modal hidden" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Warranty Details</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
